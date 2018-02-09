@@ -36,7 +36,7 @@ Created on Wed Jan 31 09:23:59 2018
 '''----------------------------'''
 
 z = '000'
-data = open('C:\\Users\\danielmota\\Documents\\KochTemp\\' +z+ '.txt','r')
+data = open('C:\\Users\\danielmota\\Documents\\GitHub\\TransUrb\\' +z+ '.txt','r')
 
 
 line = data.readlines()
@@ -99,8 +99,7 @@ count2 = len(t)
 
 # DMota - Criação do padrão de horários - INICIO
 
-vehicle = '11091'
-line = '33348'
+
 import datetime
 lst_time_pattern = []
 for ii in range(24):
@@ -110,7 +109,7 @@ for ii in range(24):
 # DMota - Criação do padrão de horários - FIM        
 
 
-h=1
+
 dados_semitratados = []
 dados_temp = []
 
@@ -132,8 +131,32 @@ for ltp in lst_time_pattern:
 
 
 
+h=1
+dct_line = dict()
 
 
+##### Gera dicionário com onibus e linhas
+k = 'k' #Solucao para o ) que vinha depois de y no segundo while
+while h<=count2-1:
+    tex = t.__getitem__(h)
+    c1,c2,c3,c4,c5,c6 = tex.split(',')
+    
+    if c3 in dct_line:
+        if c4 in dct_line[c3]:
+            pass
+        else:
+            dct_line[c3].append(c4)
+    else:
+        dct_line[c3] = [c4]
+    
+    h += 1
+
+
+vehicle = '12163'
+line = '1364'
+
+#for vehicle in dct_line['33348']:
+h=1
 k = 'k' #Solucao para o ) que vinha depois de y no segundo while
 while h<=count2-1:
     tex = t.__getitem__(h)
@@ -174,7 +197,7 @@ for pos in position.keys():
     elif (len(position[pos]) == 1):
         
         for jayjayojatinho in position[pos]:
-            media_tuplex = (jayjayojatinho[0], jayjayojatinho[1])
+            media_tuple = (jayjayojatinho[0], jayjayojatinho[1])
             position[pos] = [media_tuple]
       
      
@@ -233,7 +256,7 @@ for label,X_count,Y_count in zip(labels,X,Y):
                  xy=(X_count,Y_count),
                  xytext=(5,-5),
                  textcoords='offset points')    
-plt.title(u"Trajetória do veículo linha " + line)
+plt.title(u"Trajetoria da linha " + str(line) + " veiculo:" + str(vehicle))
 plt.xlabel("Latitude")
 plt.ylabel("Longitude")
 plt.show()
@@ -265,7 +288,6 @@ Velm = []
 it = 0
 
 lst_time = position.keys()
-lst_time_lixo = position.keys()
 
 
 tpl_vel = tuple()
@@ -319,13 +341,13 @@ for ii in range(24):
 #Agregar Velocidades
  
 
-from numpy import mean as nmean
+
 lst_test = []                   
-time_window = 10
+time_window = 59
 lst_timewdw = []
 lst_velwdw = []
 dict_window = dict()
-current_date = datetime.datetime(1900, 1, 1, 0, 0)
+current_date =(datetime.datetime(1900, 1, 1, 0, 0)) #testei como str tambem sem sucesso
 last_date = (datetime.datetime(1900, 1, 1, 0, 0))
 
 for ii in range(24):
@@ -333,15 +355,15 @@ for ii in range(24):
     for j in range(60):
         if (k < 60):        
             try:
-                print "Quer criar em -> " + str(last_date)  + "Tempo atual é -> " + str(lst_time2[0])
+#                print "Quer criar em -> " + str(last_date)  + "Tempo atual é -> " + str(lst_time2[0])
                 if lst_time2[0] == last_date:
-                    print "Criou em -> " + str(last_date) 
+#                    print "Criou em -> " + str(last_date) 
                     dict_window[last_date] = [lst_vel[0]]
                     del lst_time2[0]
                     del lst_vel[0]
                 else:
                     while (lst_time2[0] < current_date):
-                        print "Acumulada-> "+str(lst_time2[0]) + " Entra em -> " + str(last_date)
+#                        print "Acumulada-> "+str(lst_time2[0]) + " Entra em -> " + str(last_date)
                         dict_window[last_date].append(lst_vel[0])
                         
                         lst_test = lst_time2
@@ -349,11 +371,50 @@ for ii in range(24):
                         del lst_vel[0]
                     last_date = current_date
                     k = k + time_window
-                    current_date=datetime.datetime(1900, 1, 1, ii, k)
+                    current_date=(datetime.datetime(1900, 1, 1, ii, k))
             except:
-                print "Falhou"
+#                print "Falhou"
                 pass
+
+
+for l in dict_window.keys():
+    if (dict_window[l]>0):
+        dict_window[l] = sum(dict_window[l])/len(dict_window[l])
+    else:
+        dict_window[l] = 0
+
+    
+
+
+
 #    break
+#
+#countm = 0
+#sumi = 0
+#
+#for dic in range(len(dict_window.keys())): 
+#    countm += 1
+#    counti = 0
+#    while counti < 10:
+#        sumi += dict_window[lst_test[dic]][counti]
+#        counti += 1
+#    meani = sumi/countm    
+
+
+
+#dict_test = {'00:00':[2,3,4,5,2,3,4,5,2,3],'00:10':[5,1,5,1,5,1,5,1,5,1],'00:20':[4,1,2,8,5,1,2,8,2,1],'00:30':[3,1,2,5,3,1,2,5,4,1]}
+#lst_dict_test = ['00:00','00:10','00:20','00:30']
+#
+#countm = 0
+#sumi=0
+#for dicktest in range(len(dict_test.keys())):
+#    countm += 1
+#    counti = 0
+#    print 'fock' 
+#    while counti < 10:
+#        sumi += dict_test[lst_dict_test[dicktest]][counti]
+#        counti += 1
+#    meani = sumi/countm
 
 
 
@@ -361,41 +422,37 @@ for ii in range(24):
 
 
 
-dict_test = {'00:00':[2,3,4,5,2,3,4,5,2,3],'00:10':[5,1,5,1,5,1,5,1,5,1],'00:20':[4,1,2,8,5,1,2,8,2,1],'00:30':[3,1,2,5,3,1,2,5,4,1]}
-lst_dict_test = ['00:00','00:10','00:20','00:30']
-
-sumi=0
-for dicktest in range(len(dict_test.keys())):
-    counti = 0
-    print 'fock' 
-    while counti < 10:
-        sumi += dict_test[lst_dict_test[dicktest]][counti]
-        counti += 1
-    meani = sumi/counti
 
 
 
 
 
-
-
-
-
-
-
-
-
+import matplotlib.dates as mdates
+import numpy as np
+from matplotlib import pyplot as plt2
 
 lst_time2 = dict_window.keys()
-#lst_time2.sort()
+lst_time2.sort()
+
+lst_time3 = []
+
+for l in lst_time2:
+    #lst_time3.append(str(l.time())[0:5])
+    lst_time3.append(l.time())
+
 lst_vel = []
 
 for i in lst_time2:
     lst_vel.append(dict_window[i])
 
-plt.plot(lst_time2,lst_vel)
+fig = plt2.figure(num=None, figsize=(10, 5), dpi=100, facecolor='w', edgecolor='k')
+ax  = fig.add_subplot(111)
+plt2.plot(lst_time3,lst_vel,c='b', label='Velocidade Media')
 
 
+#ax.xaxis.set_major_locator(mdates.MinuteLocator(interval=20))   #to get a tick every 15 minutes
+#ax.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))     #optional formatting 
+#plt.show()
 
 # Comentado DMota - Inicio 
 
